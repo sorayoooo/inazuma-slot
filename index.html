@@ -1,0 +1,71 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>イナズマ必殺技スロット｜非公式ファン制作</title><style>
+:root{font-family:system-ui,'Yu Gothic',sans-serif;color:#f7fbff;background:#102342;
+  color: white;}*{box-sizing:border-box}body{margin:0;min-height:100vh;background: #102342;
+  color: white;}main{max-width:940px;margin:auto;padding:34px 18px 60px}header{text-align:center}h1{font-size:clamp(27px,5vw,48px);margin:12px 0;color:#ffce53;text-shadow:0 3px #a24414}p{color:#b9cbe7}.panel{background:#122747;border:1px solid #36587f;border-radius:22px;padding:22px;margin:22px 0;box-shadow:0 15px 45px #0004}.slots{display:grid;grid-template-columns:1fr 1fr;gap:15px}.slot{min-width:0;text-align:center}.slot small{display:block;color:#b5ccec;margin-bottom:10px}.window{height:160px;overflow:hidden;position:relative;background:linear-gradient(#c8d9f0,#fff 43%,#fff 57%,#c8d9f0);border:5px solid #f6a93d;border-radius:16px;color:#173154;box-shadow:inset 0 5px 18px #17315455}.reel{position:absolute;top:50%;left:0;width:100%;transition:transform .08s linear}.item{height:50px;display:flex;align-items:center;justify-content:center;font-size:clamp(16px,3vw,26px);font-weight:900;padding:0 6px;overflow-wrap:anywhere}.window:after{content:'';position:absolute;top:33.333%;bottom:33.333%;left:0;right:0;pointer-events:none;border-top:2px solid #e99227;border-bottom:2px solid #e99227}.actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:16px}button,select,input{font:inherit}button{background:linear-gradient(#ffda66,#ff9c24);color:#14213d;border:0;border-radius:12px;padding:13px 20px;font-weight:800;cursor:pointer}button.secondary{background:#2b4c75;color:#fff;border:1px solid #6385ae}button:disabled{opacity:.45;cursor:not-allowed}.result{text-align:center;font-size:clamp(23px,5vw,39px);font-weight:900;color:#ffdd72;min-height:54px;overflow-wrap:anywhere}.filters{display:flex;gap:12px;flex-wrap:wrap;align-items:center}select,input{background:#071c35;color:white;border:1px solid #6483a6;border-radius:8px;padding:9px}.stats{font-size:13px;color:#b9cbe7;margin-top:12px}.history{list-style:none;padding:0}.history li{border-bottom:1px solid #34516d;padding:9px 0;overflow-wrap:anywhere}.note{font-size:13px;line-height:1.7}details{margin-top:14px}summary{cursor:pointer}textarea{width:100%;height:140px;background:#071c35;color:#fff;border:1px solid #6483a6;border-radius:9px;padding:12px}label{font-weight:700}a{color:#ffcf6a}@media(max-width:480px){.panel{padding:14px}.window{height:138px}.item{height:42.6667px}.window:after{top:33.333%;bottom:33.333%}.actions button{flex:1;padding:12px 8px}}
+
+/* 中央の選択枠と文字を強調し、上下は控えめに */
+.item { font-weight: 400; color: #8091a7; }
+.item:nth-child(2) { font-weight: 900; color: #173154; }
+.window:after { border-top: 4px solid #e99227; border-bottom: 4px solid #e99227; }
+/* シリーズを複数チェックして混合抽選 */
+.series-bulk-actions{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}.series-bulk-actions button{padding:8px 12px;font-size:14px}.series-choices{display:flex;flex-wrap:wrap;gap:8px}
+.series-choice{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border:1px solid #6483a6;border-radius:10px;background:#071c35;cursor:pointer;user-select:none}
+.series-choice input{accent-color:#ffb83c;margin:0}
+.series-choice:has(input:checked){background:#274b72;border-color:#ffbf53}
+</style></head><body><main><header><div></div><h1 style="text-shadow: none;color: #FFD700; font-family: 'Yu Gothic', sans-serif; font-weight: 900;">イナズマ必殺技スロット</h1><p>実在する技名の前半と後半を組み合わせて新しい必殺技を編みだそう</p></header><section class="panel"><div class="filters"><label>作品フィルター（複数選択可）</label><div class="series-bulk-actions"><button type="button" id="selectAllSeries" class="secondary">すべてチェック</button><button type="button" id="clearAllSeries" class="secondary">すべて外す</button></div><div id="seriesChoices" class="series-choices" role="group" aria-label="抽選対象のシリーズ"></div><label><input type="checkbox" id="unique" checked> 重複パーツを1回ずつ抽選</label></div><div class="stats" id="stats"></div></section><section class="panel"><div class="slots"><div class="slot"><small>前半スロット</small><div class="window"><div class="reel" id="reelA"></div></div><div class="actions"><button id="stopA" class="secondary" disabled>前半 STOP</button></div></div><div class="slot"><small>後半スロット</small><div class="window"><div class="reel" id="reelB"></div></div><div class="actions"><button id="stopB" class="secondary" disabled>後半 STOP</button></div></div></div><div class="actions"><button id="start"> ルーレット開始</button><button id="stopBoth" class="secondary" disabled>両方 STOP</button></div><p style="text-align:center">完成した必殺技</p><div class="result" id="result">？？？</div><div class="actions"><button class="secondary" id="copy">名前をコピー</button><button class="secondary" id="shareX" disabled>Xでポストする</button></div></section><section class="panel"><h2>生成履歴</h2><ul id="history" class="history"><li>まだ生成されていません</li></ul><button class="secondary" id="clear">履歴を消す</button></section><section class="panel"><h2>収録データについて</h2><p class="note">このサイトの必殺技は管理者が公開する共通データから読み込まれます。現在はスターター版で、全シリーズの技を網羅していません。自然に分割できる技を順次追加予定です。</p><p class="stats" id="dataVersion"></p></section><p class="note">本サイトは非公式のファン制作物であり、LEVEL5および権利者とは関係ありません。必殺技名の使用・公開にあたっては権利者のガイドラインを確認してください。</p></main><script src="moves.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+let data=(typeof MOVES!=='undefined'?MOVES:[]).filter(r=>Array.isArray(r)&&r.length>=4&&r.slice(0,4).every(x=>typeof x==='string'&&x.trim()));
+let poolA=[],poolB=[],running=false,spinning=[false,false],timers=[null,null],current=['',''],history=[];
+function pick(a){return a[Math.floor(Math.random()*a.length)]}
+function refresh(){
+ const existing=[...document.querySelectorAll('#seriesChoices input:checked')].map(el=>el.value);
+ const firstLoad=!document.querySelector('#seriesChoices input');
+ const series=[...new Set(data.map(x=>x[3]))].sort();
+ const choices=$('seriesChoices');choices.replaceChildren();
+ for(const name of series){
+  const label=document.createElement('label');label.className='series-choice';
+  const input=document.createElement('input');input.type='checkbox';input.value=name;
+  input.checked=firstLoad||existing.includes(name);
+  input.addEventListener('change',setPools);
+  label.append(input,document.createTextNode(name));choices.append(label);
+ }
+ setPools();
+}
+function setPools(){
+ const selected=new Set([...document.querySelectorAll('#seriesChoices input:checked')].map(el=>el.value));
+ const filtered=data.filter(x=>selected.has(x[3]));
+ const a=filtered.map(x=>x[1]),b=filtered.map(x=>x[2]);
+ poolA=$('unique').checked?[...new Set(a)]:a;
+ poolB=$('unique').checked?[...new Set(b)]:b;
+ $('stats').textContent=`選択中 ${selected.size}シリーズ ／ 登録技 ${filtered.length}件 ／ 前半 ${poolA.length}候補 ／ 後半 ${poolB.length}候補（全登録 ${data.length}件）`;
+ if(!running){render(0,poolA[0]||'？？？');render(1,poolB[0]||'？？？')}
+ controls();
+}
+function render(i,word){current[i]=word;const reel=$(i?'reelB':'reelA');const pool=i?poolB:poolA;const prev=pick(pool)||word,next=pick(pool)||word;reel.replaceChildren(...[prev,word,next].map(t=>{const d=document.createElement('div');d.className='item';d.textContent=t;return d}));reel.style.transform='translateY(-50%)'}
+function controls(){$('start').disabled=running||!poolA.length||!poolB.length;$('stopA').disabled=!spinning[0];$('stopB').disabled=!spinning[1];$('stopBoth').disabled=!running}
+function start(){if(running||!poolA.length||!poolB.length)return;running=true;spinning=[true,true];$('result').textContent='回転中…';$('shareX').disabled=true;for(let i=0;i<2;i++)timers[i]=setInterval(()=>render(i,pick(i?poolB:poolA)),75);controls()}
+function stop(i){if(!spinning[i])return;clearInterval(timers[i]);spinning[i]=false;render(i,pick(i?poolB:poolA));if(!spinning.some(Boolean)){running=false;const name=current.join('');$('result').textContent=name;$('shareX').disabled=false;history.unshift(name);history=history.slice(0,20);$('history').replaceChildren(...history.map(n=>{const li=document.createElement('li');li.textContent=n;return li}))}controls()}
+// Xの投稿画面を開く。自動投稿はしない。
+$('shareX').onclick=()=>{
+ if(running||!history.length)return;
+ const name=history[0];
+ const text=`「${name}」という必殺技を作ったよ！⚡\n\n#イナズマ必殺技スロット`;
+ const url='https://sorayoooo.github.io/inazuma-slot/';
+ const intent='https://twitter.com/intent/tweet?'+new URLSearchParams({text,url}).toString();
+ window.open(intent,'_blank','noopener,noreferrer');
+};
+$('selectAllSeries').onclick=()=>{document.querySelectorAll('#seriesChoices input').forEach(el=>el.checked=true);setPools()};$('clearAllSeries').onclick=()=>{document.querySelectorAll('#seriesChoices input').forEach(el=>el.checked=false);setPools()};$('start').onclick=start;$('stopA').onclick=()=>stop(0);$('stopB').onclick=()=>stop(1);$('stopBoth').onclick=()=>{stop(0);stop(1)};$('unique').onchange=setPools;$('clear').onclick=()=>{history=[];$('history').replaceChildren(Object.assign(document.createElement('li'),{textContent:'まだ生成されていません'}))};$('copy').onclick=async()=>{if(!history.length)return;try{await navigator.clipboard.writeText(history[0]);alert('コピーしました')}catch{prompt('必殺技名をコピーしてください',history[0])}};
+function parseCSV(text){
+ text=text.replace(/^\uFEFF/,'');let out=[],row=[],field='',quoted=false;
+ for(let i=0;i<text.length;i++){let c=text[i];if(quoted){if(c==='"'&&text[i+1]==='"'){field+='"';i++}else if(c==='"')quoted=false;else field+=c}
+ else if(c==='"')quoted=true;else if(c===','){row.push(field);field=''}else if(c==='\n'){row.push(field.replace(/\r$/,''));out.push(row);row=[];field=''}else field+=c}
+ if(field||row.length){row.push(field.replace(/\r$/,''));out.push(row)}
+ if(out.length&&out[0][0]==='元の技名')out.shift();
+ return out.map(r=>r.slice(0,4).map(x=>x.trim())).filter(r=>r.length===4&&r.every(x=>x&&x.length<=80));
+}
+function applyCSV(text,label){const rows=parseCSV(text);if(!rows.length)throw Error('有効な技データがありません');if(running){for(let i=0;i<2;i++)clearInterval(timers[i]);running=false;spinning=[false,false]};data=rows;refresh();controls();$('dataVersion').textContent=`共通データ：${data.length}件（${label}）`;}
+$('dataVersion').textContent='共通データ：'+data.length+'件（初期収録版）';refresh();controls();
+// GitHub Pages等のHTTP公開時には共通CSVを自動読込。file://ではブラウザ制限があるため初期データで起動。
+if(location.protocol==='http:'||location.protocol==='https:')fetch('moves.csv',{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('HTTP '+r.status);return r.text()}).then(t=>applyCSV(t,'moves.csv')).catch(e=>{$('dataVersion').textContent+=' ／ CSV読み込み失敗：'+e.message});
+</script></body></html>
