@@ -20,13 +20,14 @@ let poolA=[],poolB=[],running=false,spinning=[false,false],timers=[null,null],cu
 function pick(a){return a[Math.floor(Math.random()*a.length)]}
 function refresh(){
  const existing=[...document.querySelectorAll('#seriesChoices input:checked')].map(el=>el.value);
- const firstLoad=!document.querySelector('#seriesChoices input');
+ const previousNames=[...document.querySelectorAll('#seriesChoices input')].map(el=>el.value);
+ const firstLoad=previousNames.length===0;
  const series=[...new Set(data.map(x=>x[3]))].sort();
  const choices=$('seriesChoices');choices.replaceChildren();
  for(const name of series){
   const label=document.createElement('label');label.className='series-choice';
   const input=document.createElement('input');input.type='checkbox';input.value=name;
-  input.checked=firstLoad||existing.includes(name);
+  input.checked=firstLoad||!previousNames.includes(name)||existing.includes(name);
   input.addEventListener('change',setPools);
   label.append(input,document.createTextNode(name));choices.append(label);
  }
